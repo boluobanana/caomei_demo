@@ -1,4 +1,3 @@
-//import  "three"
+import { THREE } from "three"
 
-//console.log(THREE);
-console.log(11111111);
+console.log(THREE);

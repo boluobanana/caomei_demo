@@ -4,9 +4,9 @@ module.exports = {
     entry: {
         app: ['./entry.js']
     },
-    output: {
-        path: path.resolve(__dirname, "build"),
-        filename: 'bundle.js' // 输出文件的名称
+    output:{
+        path:path.resolve(__dirname, 'build'),
+        filename: 'bundle.js'
     },
     module: {
         loaders: [{
