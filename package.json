@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/boluobanana/caomei_demo#readme",
   "dependencies": {
+    "style-loader": "^0.13.0",
     "three": "^0.74.0",
     "webpack": "^1.12.14"
   },

@@ -415,7 +415,7 @@
 
 	var _three = __webpack_require__(7);
 
-	console.log(_three.THREE);
+	var _test = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"test\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 /***/ },
 /* 7 */

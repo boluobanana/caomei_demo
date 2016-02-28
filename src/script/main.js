@@ -1,3 +1,3 @@
-import { THREE } from "three"
+import { THREE } from "three";
 
-console.log(THREE);
+import { year } from "test";
