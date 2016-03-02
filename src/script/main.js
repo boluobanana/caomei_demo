@@ -1,6 +1,6 @@
 import { THREE } from "three";
 import {banana} from "./banana";
-import { canvas } from "./vrserver"
+import { scene } from "./vrserver"
 
 banana.subscribe('pp', function ( event ) {
 
@@ -8,8 +8,11 @@ banana.subscribe('pp', function ( event ) {
 })
 //banana.publish('pp');
 
-var canvas = new canvas();
+var canvas = new scene();
 
-console.log('test');
-
-
+function render (){
+	//canvas.render(canvas);
+	requestAnimationFrame(render);
+	console.log(1);
+}
+render();

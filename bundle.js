@@ -50,6 +50,8 @@
 
 	__webpack_require__(5);
 
+	console.log(11);
+
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
@@ -85,7 +87,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\r\n  background-color: #000;\r\n  color: #fff;\r\n  margin: 0;\r\n}\r\n#siye {\r\n  position: absolute;\r\n  top: 0;\r\n  left: 0;\r\n}\r\n", ""]);
+	exports.push([module.id, "body {\n  background-color: #000;\n  color: #fff;\n  margin: 0;\n}\n#siye {\n  position: absolute;\n  top: 0;\n  left: 0;\n}\n", ""]);
 
 	// exports
 
@@ -408,9 +410,24 @@
 
 	var _three = __webpack_require__(6);
 
-	console.log(123);
-	console.log(321);
-	console.log(111);
+	var _banana = __webpack_require__(7);
+
+	var _vrserver = __webpack_require__(8);
+
+	_banana.banana.subscribe('pp', function (event) {
+
+		console.log('ppppppppppppppppppp');
+	});
+	//banana.publish('pp');
+
+	var canvas = new _vrserver.scene();
+
+	function render() {
+		//canvas.render(canvas);
+		requestAnimationFrame(render);
+		console.log(1);
+	}
+	render();
 
 /***/ },
 /* 6 */
@@ -40985,6 +41002,214 @@
 	  this['THREE'] = THREE;
 	}
 
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var banana = {};
+	var subscriptions = {};
+
+	var slice = [].slice;
+
+	window.banana = banana;
+
+	banana.subscribe = function (topic, context, callback, priority) {
+
+		if (typeof topic !== 'string') {
+			throw new Error("你必须传人一个字符串作为事件名");
+		}
+
+		if (arguments.length === 3 && typeof callback === "number") {
+			priority = callback;
+			callback = context;
+			context = null;
+		}
+		if (arguments.length === 2) {
+			callback = context;
+			context = null;
+		}
+		priority = priority || 10;
+
+		var topicIndex = 0,
+		    topics = topic.split(/\s/),
+		    topicLength = topics.length,
+		    added;
+
+		for (; topicIndex < topicLength; topicIndex++) {
+			topic = topics[topicIndex];
+			added = false;
+
+			if (!subscriptions[topic]) {
+				subscriptions[topic] = [];
+			}
+			var i = subscriptions[topic].length - 1,
+			    subscriptionInfo = {
+				callback: callback,
+				context: context,
+				priority: priority
+			};
+
+			for (; i >= 0; i--) {
+				if (subscriptions[topic][i].priority <= priority) {
+					subscriptions[topic].splice(i + 1, 0, subscriptionInfo);
+					added = true;
+					break;
+				}
+			}
+
+			if (!added) {
+				subscriptions[topic].unshift(subscriptionInfo);
+			}
+		}
+		return callback;
+	};
+	banana.unsubscribe = function (topic, context, callback) {
+		if (typeof topic !== "string") {
+			throw new Error("You must provide a valid topic to remove a subscription.");
+		}
+		console.log(1111111111);
+		if (arguments.length === 2) {
+			callback = context;
+			context = null;
+		}
+
+		if (!subscriptions[topic]) {
+			return;
+		}
+
+		var length = subscriptions[topic].length,
+		    i = 0;
+
+		for (; i < length; i++) {
+			if (subscriptions[topic][i].callback === callback) {
+				if (!context || subscriptions[topic][i].context === context) {
+					subscriptions[topic].splice(i, 1);
+
+					// Adjust counter and length for removed item
+					i--;
+					length--;
+				}
+			}
+		}
+	};
+	banana.publish = function (topic) {
+
+		if (typeof topic !== 'string') {
+			throw new Error("你必须传人一个字符串作为事件名");
+		}
+
+		var args = slice.call(arguments, 1),
+		    topicSubscriptions,
+		    subscription,
+		    length,
+		    i = 0,
+		    ret;
+
+		if (!subscriptions[topic]) {
+			return true;
+		}
+
+		topicSubscriptions = subscriptions[topic].slice();
+		for (length = topicSubscriptions.length; i < length; i++) {
+			subscription = topicSubscriptions[i];
+			ret = subscription.callback.apply(subscription.context, args);
+			if (ret === false) {
+				break;
+			}
+		}
+		return ret !== false;
+	};
+
+	exports.banana = banana;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.scene2 = exports.scene = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _three = __webpack_require__(6);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	console.log(_three.THREE);
+	banana.canvas = {};
+
+	var scene = function () {
+		function scene() {
+			_classCallCheck(this, scene);
+
+			console.log('canvas');
+			this.scene = new _three.THREE.Scene();
+			this.camera = new _three.THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+			this.renderer = new _three.THREE.WebGLRenderer();
+
+			this.renderer.setClearColor(0xffffff);
+			this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+			var light = new _three.THREE.AmbientLight(0xcccccc);
+			var axes = new _three.THREE.AxisHelper(20);
+			this.scene.add(light);
+			this.scene.add(axes);
+
+			var plane = new _three.THREE.Mesh(new _three.THREE.PlaneGeometry(60, 60), new _three.THREE.MeshBasicMaterial({ color: 0x000000 }));
+			plane.y = -10;
+			this.scene.add(plane);
+
+			document.querySelector('#containe').appendChild(this.renderer.domElement);
+		}
+
+		_createClass(scene, [{
+			key: 'render',
+			value: function render(canvas) {
+				console.log('scene1');
+				canvas.renderer.render(canvas.scene, canvas.camera);
+			}
+		}]);
+
+		return scene;
+	}();
+
+	var scene2 = function scene2() {
+
+		this.scene = new _three.THREE.Scene();
+		this.camera = new _three.THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+		this.renderer = new _three.THREE.WebGLRenderer();
+
+		this.renderer.setClearColor(0xffffff);
+		this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+		var light = new _three.THREE.AmbientLight(0xcccccc);
+		var axes = new _three.THREE.AxisHelper(20);
+		this.scene.add(light);
+		this.scene.add(axes);
+
+		var plane = new _three.THREE.Mesh(new _three.THREE.PlaneGeometry(60, 60), new _three.THREE.MeshBasicMaterial({ color: 0x000000 }));
+		plane.y = -10;
+		this.scene.add(plane);
+
+		document.querySelector('#containe').appendChild(this.renderer.domElement);
+	};
+
+	scene2.prototype.render = function (canvas) {
+		canvas.renderer.render(canvas.scene, canvas.camera);
+	};
+
+	exports.scene = scene;
+	exports.scene2 = scene2;
 
 /***/ }
 /******/ ]);
