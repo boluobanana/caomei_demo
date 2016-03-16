@@ -1,6 +1,7 @@
 var banana = {};
 var subscriptions = {};
 
+
 var slice = [].slice;
 
 window.banana = banana;
@@ -84,7 +85,7 @@ banana.unsubscribe = function ( topic, context, callback ) {
 			}
 		}
 	}
-}
+};
 banana.publish = function ( topic ) {
 
 	if (typeof topic !== 'string') {
