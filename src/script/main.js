@@ -18,26 +18,13 @@ function widgetInit () {
 	//var layer = new Layer(canvas);
 	var sprite = new LittleSprite(canvas);
 	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
 	sprite.createLittleSprite(0,0,-10);
 	var i = 100;
 	while(i--){
-		sprite.createLittleSprite(rand(), rand(), -3);
+		sprite.createLittleSprite(rand(), rand(), rand());
 	}
-
 	new Dat();
-	console.log(222);
-
+	console.log(1);
 	function rand(){
 		var r = Math.random() - 0.5;
 		return r * 100;
@@ -48,11 +35,10 @@ function widgetInit () {
 
 
 
-function render (){
-	canvas.render(canvas);
-	requestAnimationFrame(render);
-}
+//function render (){
+//	canvas.render(canvas);
+//	requestAnimationFrame(render);
+//}
 
-console.log(canvas);
 
-render();
+//render();
