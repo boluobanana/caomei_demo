@@ -2,7 +2,7 @@ import { THREE } from 'three';
 import { banana } from './banana';
 banana.canvas = {};
 
-class scene {
+class vrserver {
 
 	constructor(){
 
@@ -34,8 +34,7 @@ class scene {
 		this.camera.position.z = 80;
 		this.camera.lookAt(this.scene.position);
 
-		this.scene.add(plane);
-
+		//this.scene.add(plane);
 
 		banana.publish('init');
 		document.querySelector('#containe').appendChild(this.renderer.domElement);
@@ -49,7 +48,7 @@ class scene {
 
 
 
-export { scene };
+export { vrserver };
 
 
 
