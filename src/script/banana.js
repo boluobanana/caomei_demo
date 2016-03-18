@@ -56,7 +56,7 @@ banana.subscribe = function ( topic, context, callback, priority ) {
 	}
 	return callback;
 
-}
+};
 banana.unsubscribe = function ( topic, context, callback ) {
 	if (typeof topic !== "string") {
 		throw new Error( "You must provide a valid topic to remove a subscription." );
@@ -112,6 +112,39 @@ banana.publish = function ( topic ) {
 		}
 	}
 	return ret !== false;
-}
+};
 
+banana.ajax = function ( obj ) {
+	this.xhr = new XMLHttpRequest();
+
+	obj.type = obj.type || 'GET';
+	obj.data = obj.data || null;
+
+	try{
+		this.xhr.open(obj.type, obj.url, true);
+		this.xhr.send(obj.data);
+	}catch(err){
+		throw err;
+	}
+	this.xhr.done = function (callback){
+		if (typeof callback !== 'function') {
+			console.warn('not function');
+			return false;
+		}
+		this.onload = function (data){
+			callback(data.target.responseText);
+		};
+		return this;
+	};
+	return this.xhr;
+};
+
+//banana.ajax.prototype.done = function (callback){
+//	if (typeof callback !== 'function') {
+//		console.warn('not function');
+//		return false;
+//	}
+//	this.xhr.onload = callback;
+//	return this;
+//};
 export { banana } ;

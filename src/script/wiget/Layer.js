@@ -6,8 +6,8 @@ import { Dat } from './ConGui';
 
 class Layer{
 
-	constructor(canvas){
-		this.canvas = canvas;
+	constructor(){
+		this.canvas = banana.canvas;
 		this.planes = [];
 
 

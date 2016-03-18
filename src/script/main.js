@@ -11,28 +11,26 @@ banana.subscribe('pp', function ( event ) {
 //banana.publish('pp');
 
 var canvas = new vrserver();
-
+banana.canvas = canvas;
 widgetInit();
 
 function widgetInit () {
 	//var layer = new Layer(canvas);
 	var sprite = new LittleSprite(canvas);
 	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
-	//layer.createLayer();
+
+	var t = banana.ajax({
+		url:'src/script/data/chapter1.json'
+	}).done(function (data){
+		console.log(JSON.parse(data));
+	});
+
+
+
 	sprite.createLittleSprite(0,0,-10);
 	var i = 100;
 	while(i--){
-		sprite.createLittleSprite(rand(), rand(), -3);
+		sprite.createLittleSprite(rand(), rand(), rand());
 	}
 
 	new Dat();

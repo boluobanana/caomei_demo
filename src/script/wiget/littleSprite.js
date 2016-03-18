@@ -3,9 +3,9 @@ import { Sprite } from './Sprite';
 
 class LittleSprite extends Sprite{
 
-	constructor(canvas) {
+	constructor() {
 
-		super(canvas);
+		super();
 		this.size = 5;
 		this.transparent = true;
 		this.opacity = 1;

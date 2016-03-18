@@ -3,8 +3,8 @@ import { THREE } from 'three';
 
 class Sprite{
 
-	constructor(canvas) {
-		this.canvas = canvas;
+	constructor() {
+		this.canvas = banana.canvas;
 
 
 	}
