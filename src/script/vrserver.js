@@ -34,20 +34,15 @@ class vrserver {
 		this.camera.position.z = 80;
 		this.camera.lookAt(this.scene.position);
 
-		this.render();
 		//this.scene.add(plane);
-
 
 		banana.publish('init');
 		document.querySelector('#containe').appendChild(this.renderer.domElement);
 
 	}
-	render(){
-		var scope = this;
-		requestAnimationFrame(scope.render);
-		this.renderer.render(this.scene, this.camera);
+	render(canvas){
+		canvas.renderer.render(canvas.scene, canvas.camera);
 		banana.publish('animate');
-
 	}
 }
 
