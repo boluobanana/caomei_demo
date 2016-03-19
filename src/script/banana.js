@@ -23,10 +23,7 @@ banana.subscribe = function ( topic, context, callback, priority ) {
 	}
 	priority = priority || 10;
 
-	var topicIndex = 0,
-		topics = topic.split( /\s/ ),
-		topicLength = topics.length,
-		added;
+	var topicIndex = 0, topics = topic.split( /\s/ ), topicLength = topics.length, added;
 
 	for (; topicIndex < topicLength; topicIndex++) {
 		topic = topics[topicIndex];
@@ -35,12 +32,9 @@ banana.subscribe = function ( topic, context, callback, priority ) {
 		if (!subscriptions[topic]) {
 			subscriptions[topic] = [];
 		}
-		var i = subscriptions[topic].length - 1,
-			subscriptionInfo = {
-				callback: callback,
-				context: context,
-				priority: priority
-			};
+		var i = subscriptions[topic].length - 1, subscriptionInfo = {
+			callback: callback, context: context, priority: priority
+		};
 
 		for (; i >= 0; i--) {
 			if (subscriptions[topic][i].priority <= priority) {
@@ -61,7 +55,7 @@ banana.unsubscribe = function ( topic, context, callback ) {
 	if (typeof topic !== "string") {
 		throw new Error( "You must provide a valid topic to remove a subscription." );
 	}
-	console.log(1111111111);
+	console.log( 1111111111 );
 	if (arguments.length === 2) {
 		callback = context;
 		context = null;
@@ -71,8 +65,7 @@ banana.unsubscribe = function ( topic, context, callback ) {
 		return;
 	}
 
-	var length = subscriptions[topic].length,
-		i = 0;
+	var length = subscriptions[topic].length, i = 0;
 
 	for (; i < length; i++) {
 		if (subscriptions[topic][i].callback === callback) {
@@ -92,12 +85,7 @@ banana.publish = function ( topic ) {
 		throw new Error( "你必须传人一个字符串作为事件名" );
 	}
 
-	var args = slice.call( arguments, 1 ),
-		topicSubscriptions,
-		subscription,
-		length,
-		i = 0,
-		ret;
+	var args = slice.call( arguments, 1 ), topicSubscriptions, subscription, length, i = 0, ret;
 
 	if (!subscriptions[topic]) {
 		return true;
@@ -120,19 +108,19 @@ banana.ajax = function ( obj ) {
 	obj.type = obj.type || 'GET';
 	obj.data = obj.data || null;
 
-	try{
-		this.xhr.open(obj.type, obj.url, true);
-		this.xhr.send(obj.data);
-	}catch(err){
+	try {
+		this.xhr.open( obj.type, obj.url, true );
+		this.xhr.send( obj.data );
+	} catch (err) {
 		throw err;
 	}
-	this.xhr.done = function (callback){
+	this.xhr.done = function ( callback ) {
 		if (typeof callback !== 'function') {
-			console.warn('not function');
+			console.warn( 'not function' );
 			return false;
 		}
-		this.onload = function (data){
-			callback(data.target.responseText);
+		this.onload = function ( data ) {
+			callback( data.target.responseText );
 		};
 		return this;
 	};
@@ -147,4 +135,27 @@ banana.ajax = function ( obj ) {
 //	this.xhr.onload = callback;
 //	return this;
 //};
+banana.userAgent = navigator.userAgent.toLowerCase();
+banana.device = {
+	idIpad: (()=>banana.userAgent.match( /ipad/i ) == "ipad")(),
+	idIphone: (()=>banana.userAgent.match( /iphone os/i ) == "iphone os")(),
+	isAndroid: (() => banana.userAgent.match( /android/i ) == "android")(),
+	isMobile: (() => banana.userAgent.match( /mobile/i ) == "mobile")()
+};
+//banana.browserRedirect = function () {
+//	let device = this.device = {};
+//	var sUserAgent = navigator.userAgent.toLowerCase();
+//
+//	device.isIpad = sUserAgent.match( /ipad/i ) == "ipad";
+//	device.isIphone = sUserAgent.match( /iphone os/i ) == "iphone os";
+//	device.isMidp = sUserAgent.match( /midp/i ) == "midp";
+//	device.isUc7 = sUserAgent.match( /rv:1.2.3.4/i ) == "rv:1.2.3.4";
+//	device.isUc = sUserAgent.match( /ucweb/i ) == "ucweb";
+//	device.isAndroid = sUserAgent.match( /android/i ) == "android";
+//	device.isCE = sUserAgent.match( /windows ce/i ) == "windows ce";
+//	device.isWM = sUserAgent.match( /windows mobile/i ) == "windows mobile";
+//
+//};
+
+
 export { banana } ;

@@ -24,16 +24,17 @@ function widgetInit() {
 	var t = banana.ajax( {
 		url: 'src/script/data/chapter1.json'
 	} ).done( function ( data ) {
-		console.log( JSON.parse( data ) );
+		console.log('from ajax' + JSON.parse( data ) );
 	} );
 	for (var x = -5; x < 5; x++) {
 		for (var y = -5; y < 5; y++) {
-			sprite.createLittleSprite( x * 10, y * 10, -30 );
+			sprite.createLittleSprite( x * 10, y * 10, -40 );
 
 		}
 	}
 	new Dat();
-	console.log(1111);
+
+
 }
 
 

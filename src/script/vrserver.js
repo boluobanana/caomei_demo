@@ -1,6 +1,7 @@
 import { THREE } from 'three';
 import { banana } from './banana';
 import '../libs/StereoCamera'
+import '../libs/DeviceOrientationControls'
 
 banana.canvas = {};
 
@@ -9,7 +10,11 @@ class vrserver {
 	constructor() {
 		this.scene = new THREE.Scene();
 		this.scene.name = 'mainScene';
+		this.sceneOrtho = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		this.cameraOrtho = new THREE.OrthographicCamera(0, window.innerWidth, window.innerHeight, 0, -10, 10);
+
+
 		this.renderer = new THREE.WebGLRenderer();
 
 		this.vrEnable = false;
@@ -33,18 +38,20 @@ class vrserver {
 
 		this.camera.position.x = 0;
 		this.camera.position.y = 0;
-		this.camera.position.z = 90;
+		this.camera.position.z = 0;
+
 
 
 		//this.camera.lookAt(this.scene.position);
 
 		//this.scene.add(plane);
+		//插件位置
 		this.Stereo(this.renderer);
+		this.Orientation();
 
 		document.querySelector( '#containe' ).appendChild( this.renderer.domElement );
 
 		window.addEventListener( 'resize', ()=>this.resize() );
-
 		this.init();
 	}
 
@@ -52,8 +59,13 @@ class vrserver {
 
 		if (!this.vrEnable){
 			this.renderer.render( this.scene, this.camera );
+			//this.orientation.update();
 		} else {
 			this.stereo.render(this.scene, this.camera);
+			//this.orientation.update();
+		}
+		if (banana.device.isMobile && window.DeviceMotionEvent) {
+			this.orientation.update();
 		}
 	}
 
@@ -104,7 +116,15 @@ class vrserver {
 
 	}
 
+	Orientation(){
+		let ori = this.orientation = new THREE.DeviceOrientationControls(this.camera);
+	}
 
+	cursor(){
+
+		let ring = new THREE.Mesh(new THREE.RingGeometry(10,20,20,20,0,6.3),new  THREE.MeshBasicMaterial({color:0xff0000}));
+		let point = new THREE.Mesh(new THREE.PointsMaterial())
+	}
 	init(){
 
 	}

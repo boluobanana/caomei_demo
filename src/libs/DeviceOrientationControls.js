@@ -4,6 +4,7 @@
  *
  * W3C Device Orientation control (http://w3c.github.io/deviceorientation/spec-source-orientation.html)
  */
+import { THREE } from 'three';
 
 THREE.DeviceOrientationControls = function ( object ) {
 
