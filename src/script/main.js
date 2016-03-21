@@ -5,48 +5,44 @@ import { Layer } from './wiget/Layer';
 import { Dat } from './wiget/ConGui'
 import { LittleSprite } from './wiget/LittleSprite'
 
-banana.subscribe('pp', function ( event ) {
+banana.subscribe( 'pp', function ( event ) {
 
-});
+} );
 //banana.publish('pp');
 
 var canvas = new vrserver();
 banana.canvas = canvas;
+
 widgetInit();
 
-function widgetInit () {
+function widgetInit() {
 	//var layer = new Layer(canvas);
-	var sprite = new LittleSprite(canvas);
+	var sprite = new LittleSprite( canvas );
 	//layer.createLayer();
 
-	var t = banana.ajax({
-		url:'src/script/data/chapter1.json'
-	}).done(function (data){
-		console.log(JSON.parse(data));
-	});
+	let rend = ( r = 100 )=>r * (Math.random() - 0.5);
 
-	sprite.createLittleSprite(0,0,-10);
-	var i = 100;
-	while(i--){
-		sprite.createLittleSprite(rand(), rand(), -3);
+	var t = banana.ajax( {
+		url: 'src/script/data/chapter1.json'
+	} ).done( function ( data ) {
+		console.log('from ajax' + JSON.parse( data ) );
+	} );
+	for (var x = -5; x < 5; x++) {
+		for (var y = -5; y < 5; y++) {
+			sprite.createLittleSprite( x * 10, y * 10, -100 );
+
+		}
 	}
 
 	new Dat();
-	console.log(222);
-
-	function rand(){
-		var r = Math.random() - 0.5;
-		return r * 100;
-	}
-
-
+	console.log('aaa');
 }
 
 
+function render() {
+	canvas.render();
+	requestAnimationFrame( render );
 
-function render (){
-	canvas.render(canvas);
-	requestAnimationFrame(render);
 }
 
 console.log(canvas);
