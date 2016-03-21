@@ -14,11 +14,10 @@ class vrserver {
 		this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		this.cameraOrtho = new THREE.OrthographicCamera(0, window.innerWidth, window.innerHeight, 0, -10, 10);
 
-
 		this.renderer = new THREE.WebGLRenderer();
+		this.output = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
 
-		this.vrEnable = false;
-
+		this.vrEnable = true;
 
 		this.renderer.setClearColor( 0x000000 );
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -48,33 +47,42 @@ class vrserver {
 		//插件位置
 		this.Stereo(this.renderer);
 		this.Orientation();
+		this.cursorGroup = this.cursor();
 
 		document.querySelector( '#containe' ).appendChild( this.renderer.domElement );
 
-		window.addEventListener( 'resize', ()=>this.resize() );
+		window.addEventListener( 'resize', ()=>this.resize(window.innerWidth, window.innerHeight) );
 		this.init();
 	}
 
 	render() {
 
 		if (!this.vrEnable){
-			this.renderer.render( this.scene, this.camera );
-			//this.orientation.update();
+			this.renderer.render( this.scene, this.camera, this.output);
+			this.renderer.render( this.sceneOrtho, this.cameraOrtho);
 		} else {
-			this.stereo.render(this.scene, this.camera);
-			//this.orientation.update();
+			this.stereo.render(this.scene, this.camera, this.output);
+			this.renderer.render( this.sceneOrtho, this.cameraOrtho);
+
 		}
 		if (banana.device.isMobile && window.DeviceMotionEvent) {
 			this.orientation.update();
 		}
 	}
 
-	resize() {
+	resize(width, height) {
 
-		this.camera.aspect = window.innerWidth / window.innerHeight;
+		this.camera.aspect = width / height;
+
+		this.cameraOrtho.right = width;
+		this.cameraOrtho.top = height;
+
+		this.cursorGroup.position.set(width /2 , height/2, -1);
+
+		this.cameraOrtho.updateProjectionMatrix();
 		this.camera.updateProjectionMatrix();
 
-		this.renderer.setSize( window.innerWidth, window.innerHeight );
+		this.renderer.setSize( width, height );
 	}
 
 	Stereo(renderer){
@@ -89,7 +97,7 @@ class vrserver {
 
 		};
 
-		stereo.render = function ( scene, camera ) {
+		stereo.render = function ( scene, camera, renderTarget) {
 
 			scene.updateMatrixWorld();
 
@@ -102,13 +110,13 @@ class vrserver {
 			renderer.setScissorTest( true );
 			renderer.clear();
 
-			renderer.setScissor( 0, 0, size.width / 2, size.height );
-			renderer.setViewport( 0, 0, size.width / 2, size.height );
-			renderer.render( scene, _stereo.cameraL );
+			renderer.setScissor( 100, 0, size.width / 2, size.height );
+			renderer.setViewport( 100, 0, size.width / 2, size.height );
+			renderer.render( scene, _stereo.cameraL, renderTarget );
 
-			renderer.setScissor( size.width / 2, 0, size.width / 2, size.height );
-			renderer.setViewport( size.width / 2, 0, size.width / 2, size.height );
-			renderer.render( scene, _stereo.cameraR );
+			renderer.setScissor( size.width / 2, 0, size.width / 2, size.height  );
+			renderer.setViewport( size.width / 2, 0, size.width / 2, size.height   );
+			renderer.render( scene, _stereo.cameraR, renderTarget );
 
 			renderer.setScissorTest( false );
 
@@ -123,7 +131,21 @@ class vrserver {
 	cursor(){
 
 		let ring = new THREE.Mesh(new THREE.RingGeometry(10,20,20,20,0,6.3),new  THREE.MeshBasicMaterial({color:0xff0000}));
-		let point = new THREE.Mesh(new THREE.PointsMaterial())
+		let point = new THREE.Mesh(new THREE.CircleGeometry(2,20,0,6.3),new THREE.MeshBasicMaterial({color:0xff0000}));
+
+		let texture = this.output.texture;
+		let plane = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight),new THREE.MeshBasicMaterial({
+			map: texture
+		}));
+		plane.position.set(window.innerWidth/2,window.innerHeight/2,-2);
+		let cursorGroup = new THREE.Group();
+		cursorGroup.add(ring);
+		cursorGroup.add(point);
+		cursorGroup.position.set(window.innerWidth /2 , window.innerHeight /2,-1);
+
+		this.sceneOrtho.add(cursorGroup);
+		this.sceneOrtho.add(plane);
+		return cursorGroup;
 	}
 	init(){
 

@@ -28,13 +28,12 @@ function widgetInit() {
 	} );
 	for (var x = -5; x < 5; x++) {
 		for (var y = -5; y < 5; y++) {
-			sprite.createLittleSprite( x * 10, y * 10, -40 );
+			sprite.createLittleSprite( x * 10, y * 10, -100 );
 
 		}
 	}
 	new Dat();
-
-
+console.log('aaa');
 }
 
 
