@@ -19,6 +19,7 @@ function widgetInit() {
 	//var layer = new Layer(canvas);
 	var sprite = new LittleSprite( canvas );
 	//layer.createLayer();
+
 	let rend = ( r = 100 )=>r * (Math.random() - 0.5);
 
 	var t = banana.ajax( {
@@ -32,6 +33,7 @@ function widgetInit() {
 
 		}
 	}
+
 	new Dat();
 }
 
@@ -39,7 +41,9 @@ function widgetInit() {
 function render() {
 	canvas.render();
 	requestAnimationFrame( render );
+
 }
 
+console.log(canvas);
 
 render();
