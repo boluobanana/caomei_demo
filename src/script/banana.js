@@ -157,5 +157,40 @@ banana.device = {
 //
 //};
 
+function upload(url,from,option){
+
+// 实例化一个表单数据对象
+	var formData = new FormData();
+
+	for (var i = 0, file; file = from[i]; i++) {
+		// 文件名称，文件对象
+		formData.append(file.name, file);
+	}
+	var xhr = new XMLHttpRequest();
+	xhr.onload = function(){
+		option.onload();
+		this._success();
+	};
+	xhr.onerror = function (  ) {
+		option.onerror();
+		this._error();
+	};
+
+	xhr.open("POST", url, true);
+
+// 发送表单数据
+	xhr.send(formData);
+
+	xhr.then = function( success, error ){
+		this._success = success;
+		this._error = error;
+	};
+
+	return xhr;
+
+}
+
+
+
 
 export { banana } ;
