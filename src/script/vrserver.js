@@ -40,8 +40,6 @@ class vrserver {
 		this.camera.position.y = 0;
 		this.camera.position.z = 0;
 
-
-
 		//this.camera.lookAt(this.scene.position);
 
 		//this.scene.add(plane);
@@ -54,6 +52,13 @@ class vrserver {
 
 		window.addEventListener( 'resize', ()=>this.resize(window.innerWidth, window.innerHeight) );
 		this.init();
+
+		banana.subscribe('resize',()=> {
+			this.camera.aspect = window.innerWidth / window.innerHeight;
+			this.camera.updateProjectionMatrix();
+		});
+
+		this.resize(window.innerWidth, window.innerHeight);
 	}
 
 	render() {
@@ -65,10 +70,8 @@ class vrserver {
 			this.renderer.render( this.scene, this.camera, this.output);
 			this.renderer.render( this.sceneOrtho, this.cameraOrtho);
 
-			this.stereo.render(this.scene, this.cameraOrtho );
+			this.stereo.render(this.sceneOrtho, this.cameraOrtho );
 		}
-
-
 
 		if (banana.device.isMobile && window.DeviceMotionEvent) {
 			this.orientation.update();
@@ -77,17 +80,15 @@ class vrserver {
 
 	resize(width, height) {
 
-		this.camera.aspect = width / height;
-
-		this.cameraOrtho.right = width;
-		this.cameraOrtho.top = height;
-
-		this.cursorGroup.position.set(width /2 , height/2, -1);
-
-		this.cameraOrtho.updateProjectionMatrix();
-		this.camera.updateProjectionMatrix();
+		banana.publish('resize');
 
 		this.renderer.setSize( width, height );
+
+		if (this.vrEnable){
+			this.cursorGroup.position.set( width /4 , height/2, -1);
+		}else{
+			this.cursorGroup.position.set(width /2 , height/2, -1);
+		}
 	}
 
 	Stereo(renderer){
@@ -109,7 +110,6 @@ class vrserver {
 			if ( camera.parent === null ) camera.updateMatrixWorld();
 
 			_stereo.update( camera );
-
 			var size = renderer.getSize();
 
 			renderer.setScissorTest( true );
@@ -149,24 +149,34 @@ class vrserver {
 		cursorGroup.add(ring);
 		cursorGroup.add(point);
 		cursorGroup.position.set(window.innerWidth /2 , window.innerHeight /2,-1);
-		var rr = ring.clone(),
-			pp = point.clone();
-
-		rr.position.set(20, window.innerHeight /2, -1);
-		pp.position.set(window.innerWidth -20, window.innerHeight /2, -1);
-
-		this.sceneOrtho.add(rr);
-		this.sceneOrtho.add(pp);
 
 		this.sceneOrtho.add(cursorGroup);
 		this.sceneOrtho.add(plane);
+
+
+		banana.subscribe('resize', ()=> {
+			this.cameraOrtho.right = window.innerWidth;
+			this.cameraOrtho.top = window.innerHeight;
+			this.cameraOrtho.updateProjectionMatrix();
+
+			this.sceneOrtho.remove(plane);
+
+			let plane = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight),new THREE.MeshBasicMaterial({
+				map: texture
+			}));
+			plane.position.set(window.innerWidth/2,window.innerHeight/2,-2);
+			this.sceneOrtho.add(plane);
+
+		},9);
+
 		return cursorGroup;
-	}
+
+
+	};
 	init(){
 
 	}
 }
-
 
 export { vrserver };
 

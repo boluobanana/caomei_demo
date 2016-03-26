@@ -38,9 +38,14 @@ THREE.StereoCamera.prototype = {
 
 			if ( needsUpdate ) {
 
-				focalLength = camera.focalLength;
-				fov = camera.fov;
-				aspect = camera.aspect * this.aspect;
+				//focalLength = camera.focalLength;
+				//fov = camera.fov;
+				//aspect = camera.aspect * this.aspect;
+				focalLength = 10;
+				fov = 100;
+				aspect = window.innerWidth/window.innerHeight * 150;
+
+
 				near = camera.near;
 				far = camera.far;
 

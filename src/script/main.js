@@ -33,7 +33,6 @@ function widgetInit() {
 		}
 	}
 	new Dat();
-console.log('aaa');
 }
 
 
