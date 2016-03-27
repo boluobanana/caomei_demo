@@ -8,15 +8,16 @@ banana.canvas = {};
 class vrserver {
 
 	constructor() {
+
 		this.scene = new THREE.Scene();
 		this.scene.name = 'mainScene';
 		this.sceneOrtho = new THREE.Scene();
 
 		this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-		this.cameraOrtho = new THREE.OrthographicCamera(0, window.innerWidth, window.innerHeight, 0, -100, 10);
+		this.cameraOrtho = new THREE.OrthographicCamera( 0, window.innerWidth, window.innerHeight, 0, -100, 10 );
 
 		this.renderer = new THREE.WebGLRenderer();
-		this.output = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
+		this.output = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight );
 
 		this.vrEnable = false;
 
@@ -38,60 +39,61 @@ class vrserver {
 
 		plane.name = 'plane';
 
-		//this.camera.lookAt(this.scene.position);
-
 		//this.scene.add(plane);
 		//插件位置
-		this.Stereo(this.renderer);
+		this.Stereo( this.renderer );
 		this.Orientation();
 		this.cursorGroup = this.cursor();
+		this.mouseMove();
 
 		document.querySelector( '#containe' ).appendChild( this.renderer.domElement );
 
-		window.addEventListener( 'resize', ()=>this.resize(window.innerWidth, window.innerHeight) );
+		window.addEventListener( 'resize', ()=>this.resize( window.innerWidth, window.innerHeight ) );
+
 		this.init();
 
 
-
-		banana.subscribe('resize',()=> {
+		banana.subscribe( 'resize', ()=> {
 			this.camera.aspect = window.innerWidth / window.innerHeight;
 			this.camera.updateProjectionMatrix();
-		});
+		} );
 
-		this.resize(window.innerWidth, window.innerHeight);
+		this.resize( window.innerWidth, window.innerHeight );
 	}
 
 	render() {
 //needsUpdate
-		if (!this.vrEnable){
-			this.renderer.render( this.scene, this.camera, this.output);
-			this.renderer.render( this.sceneOrtho, this.cameraOrtho);
+		if (!this.vrEnable) {
+			this.renderer.render( this.scene, this.camera, this.output );
+			this.renderer.render( this.sceneOrtho, this.cameraOrtho );
 		} else {
-			this.renderer.render( this.scene, this.camera, this.output);
-			this.renderer.render( this.sceneOrtho, this.cameraOrtho);
+			this.renderer.render( this.scene, this.camera, this.output );
+			this.renderer.render( this.sceneOrtho, this.cameraOrtho );
 
-			this.stereo.render(this.sceneOrtho, this.cameraOrtho );
+			this.stereo.render( this.sceneOrtho, this.cameraOrtho );
 		}
 
 		if (banana.device.isMobile && window.DeviceMotionEvent) {
 			this.orientation.update();
 		}
+		banana.publish('animate');
+
 	}
 
-	resize(width, height) {
+	resize( width, height ) {
 
-		banana.publish('resize');
+		banana.publish( 'resize' );
 
 		this.renderer.setSize( width, height );
 
-		if (this.vrEnable){
-			this.cursorGroup.position.set( width /4 , height/2, -1);
-		}else{
-			this.cursorGroup.position.set(width /2 , height/2, -1);
+		if (this.vrEnable) {
+			this.cursorGroup.position.set( width / 4, height / 2, -1 );
+		} else {
+			this.cursorGroup.position.set( width / 2, height / 2, -1 );
 		}
 	}
 
-	Stereo(renderer){
+	Stereo( renderer ) {
 
 
 		let stereo = this.stereo = {};
@@ -107,7 +109,7 @@ class vrserver {
 
 			scene.updateMatrixWorld();
 
-			if ( camera.parent === null ) camera.updateMatrixWorld();
+			if (camera.parent === null) camera.updateMatrixWorld();
 
 			_stereo.update( camera );
 			var size = renderer.getSize();
@@ -119,8 +121,8 @@ class vrserver {
 			renderer.setViewport( 0, 0, size.width / 2, size.height );
 			renderer.render( scene, _stereo.cameraL );
 
-			renderer.setScissor( size.width / 2, 0, size.width / 2, size.height  );
-			renderer.setViewport( size.width / 2, 0, size.width / 2, size.height   );
+			renderer.setScissor( size.width / 2, 0, size.width / 2, size.height );
+			renderer.setViewport( size.width / 2, 0, size.width / 2, size.height );
 			renderer.render( scene, _stereo.cameraR );
 
 			renderer.setScissorTest( false );
@@ -129,62 +131,111 @@ class vrserver {
 
 	}
 
-	Orientation(){
-		let ori = this.orientation = new THREE.DeviceOrientationControls(this.camera);
+	Orientation() {
+		let ori = this.orientation = new THREE.DeviceOrientationControls( this.camera );
 	}
 
-	cursor(){
+	cursor() {
 
-		let ring = new THREE.Mesh(new THREE.RingGeometry(10,20,20,20,0,6.3),new  THREE.MeshBasicMaterial({color:0xff0000}));
-		let point = new THREE.Mesh(new THREE.CircleGeometry(6,20,0,6.3),new THREE.MeshBasicMaterial({color:0xff0000}));
+		let ring = new THREE.Mesh( new THREE.RingGeometry( 10, 20, 20, 20, 0, 6.3 ), new THREE.MeshBasicMaterial( {color: 0xff0000} ) );
+		let point = new THREE.Mesh( new THREE.CircleGeometry( 6, 20, 0, 6.3 ), new THREE.MeshBasicMaterial( {color: 0xff0000} ) );
 
 		let texture = this.output.texture;
-		var  plane = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight),new THREE.MeshBasicMaterial({
+		var plane = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), new THREE.MeshBasicMaterial( {
 			map: texture
-		}));
-		plane.position.set(window.innerWidth/2,window.innerHeight/2,-2);
+		} ) );
+		plane.position.set( window.innerWidth / 2, window.innerHeight / 2, -2 );
 
 
 		let cursorGroup = new THREE.Group();
-		cursorGroup.add(ring);
-		cursorGroup.add(point);
-		cursorGroup.position.set(window.innerWidth /2 , window.innerHeight /2,-1);
+		cursorGroup.add( ring );
+		cursorGroup.add( point );
+		cursorGroup.position.set( window.innerWidth / 2, window.innerHeight / 2, -1 );
 
-		this.sceneOrtho.add(cursorGroup);
-		this.sceneOrtho.add(plane);
+		this.sceneOrtho.add( cursorGroup );
+		this.sceneOrtho.add( plane );
 
 
-		banana.subscribe('resize', ()=> {
+		banana.subscribe( 'resize', ()=> {
 			this.cameraOrtho.right = window.innerWidth;
 			this.cameraOrtho.top = window.innerHeight;
 			this.cameraOrtho.updateProjectionMatrix();
 
-			resizePlane(this);
-		},9);
+			resizePlane( this );
+		}, 9 );
 
-		function resizePlane (scope){
+		function resizePlane( scope ) {
 			plane.geometry.dispose();
 			plane.material.dispose();
-			scope.sceneOrtho.remove(plane);
-			plane = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight),new THREE.MeshBasicMaterial({
+			scope.sceneOrtho.remove( plane );
+			plane = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), new THREE.MeshBasicMaterial( {
 				map: texture
-			}));
-			if (scope.vrEnable){
+			} ) );
+			if (scope.vrEnable) {
 
-				plane.position.set(window.innerWidth/4, window.innerHeight/2,-2);
-			}else {
-				plane.position.set(window.innerWidth/2, window.innerHeight/2,-2);
+				plane.position.set( window.innerWidth / 4, window.innerHeight / 2, -2 );
+			} else {
+				plane.position.set( window.innerWidth / 2, window.innerHeight / 2, -2 );
 			}
-			scope.sceneOrtho.add(plane);
+			scope.sceneOrtho.add( plane );
 
 		}
+
 		return cursorGroup;
 
 
 	};
-	init(){
+
+	init() {
 
 	}
+
+	mouseMove(){
+
+		var lon = 270,lat = 0;
+		var phi = 0,theta = 0,target = new THREE.Vector3();
+		document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+		banana.subscribe('animate',  ()=> {
+
+			lat = Math.max( - 85, Math.min( 85, lat ) );
+			phi = THREE.Math.degToRad( 90 - lat );
+			theta = THREE.Math.degToRad( lon );
+
+			target.x = Math.sin( phi ) * Math.cos( theta );
+			target.y = Math.cos( phi );
+			target.z = Math.sin( phi ) * Math.sin( theta );
+
+			this.camera.lookAt( target );
+		});
+
+		function onDocumentMouseDown( event ) {
+			event.preventDefault();
+
+			document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+			document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
+		}
+
+		function onDocumentMouseMove( event ) {
+			var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+			var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+			lon -= movementX * 0.1;
+			lat += movementY * 0.1;
+
+		}
+
+		function onDocumentMouseUp( event ) {
+			document.removeEventListener( 'mousemove', onDocumentMouseMove );
+			document.removeEventListener( 'mouseup', onDocumentMouseUp );
+
+		}
+
+	}
+
+
+
 }
 
 export { vrserver };
