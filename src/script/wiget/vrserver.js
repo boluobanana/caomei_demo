@@ -1,7 +1,7 @@
 import { THREE } from 'three';
-import { banana } from './banana';
-import '../libs/StereoCamera'
-import '../libs/DeviceOrientationControls'
+import { banana } from './../banana';
+import '../../libs/StereoCamera'
+import '../../libs/DeviceOrientationControls'
 
 banana.canvas = {};
 
@@ -18,10 +18,12 @@ class vrserver {
 		this.renderer = new THREE.WebGLRenderer();
 		this.output = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
 
-		this.vrEnable = true;
+		this.vrEnable = false;
 
 		this.renderer.setClearColor( 0x000000 );
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
+		this.renderer.setPixelRatio( window.devicePixelRatio );
+
 
 		var light = new THREE.AmbientLight( 0xcccccc );
 		var axes = new THREE.AxisHelper( 20 );
@@ -36,10 +38,6 @@ class vrserver {
 
 		plane.name = 'plane';
 
-		this.camera.position.x = 0;
-		this.camera.position.y = 0;
-		this.camera.position.z = 0;
-
 		//this.camera.lookAt(this.scene.position);
 
 		//this.scene.add(plane);
@@ -52,6 +50,8 @@ class vrserver {
 
 		window.addEventListener( 'resize', ()=>this.resize(window.innerWidth, window.innerHeight) );
 		this.init();
+
+
 
 		banana.subscribe('resize',()=> {
 			this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -139,7 +139,7 @@ class vrserver {
 		let point = new THREE.Mesh(new THREE.CircleGeometry(6,20,0,6.3),new THREE.MeshBasicMaterial({color:0xff0000}));
 
 		let texture = this.output.texture;
-		let plane = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight),new THREE.MeshBasicMaterial({
+		var  plane = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight),new THREE.MeshBasicMaterial({
 			map: texture
 		}));
 		plane.position.set(window.innerWidth/2,window.innerHeight/2,-2);
@@ -159,16 +159,25 @@ class vrserver {
 			this.cameraOrtho.top = window.innerHeight;
 			this.cameraOrtho.updateProjectionMatrix();
 
-			this.sceneOrtho.remove(plane);
-
-			let plane = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight),new THREE.MeshBasicMaterial({
-				map: texture
-			}));
-			plane.position.set(window.innerWidth/2,window.innerHeight/2,-2);
-			this.sceneOrtho.add(plane);
-
+			resizePlane(this);
 		},9);
 
+		function resizePlane (scope){
+			plane.geometry.dispose();
+			plane.material.dispose();
+			scope.sceneOrtho.remove(plane);
+			plane = new THREE.Mesh(new THREE.PlaneGeometry(window.innerWidth,window.innerHeight),new THREE.MeshBasicMaterial({
+				map: texture
+			}));
+			if (scope.vrEnable){
+
+				plane.position.set(window.innerWidth/4, window.innerHeight/2,-2);
+			}else {
+				plane.position.set(window.innerWidth/2, window.innerHeight/2,-2);
+			}
+			scope.sceneOrtho.add(plane);
+
+		}
 		return cursorGroup;
 
 
