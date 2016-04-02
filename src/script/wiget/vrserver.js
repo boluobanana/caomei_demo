@@ -207,16 +207,20 @@ class vrserver {
 		document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
 		banana.subscribe('animate',  ()=> {
+			if (!(banana.device.isMobile && window.DeviceMotionEvent)) {
 
-			lat = Math.max( - 85, Math.min( 85, lat ) );
-			phi = THREE.Math.degToRad( 90 - lat );
-			theta = THREE.Math.degToRad( lon );
+				lat = Math.max( - 85, Math.min( 85, lat ) );
+				phi = THREE.Math.degToRad( 90 - lat );
+				theta = THREE.Math.degToRad( lon );
 
-			target.x = Math.sin( phi ) * Math.cos( theta );
-			target.y = Math.cos( phi );
-			target.z = Math.sin( phi ) * Math.sin( theta );
+				target.x = Math.sin( phi ) * Math.cos( theta );
+				target.y = Math.cos( phi );
+				target.z = Math.sin( phi ) * Math.sin( theta );
 
-			this.camera.lookAt( target );
+				this.camera.lookAt( target );
+			}
+
+
 		});
 
 		function onDocumentMouseDown( event ) {
