@@ -1,9 +1,12 @@
 import {THREE} from 'three';
+import {banana} from './banana';
 import '../libs/GeometryUtils'
 
+window.THREE = THREE;
+
 var group = new THREE.Group(),
-	group2 = new THREE.Group(),
-	group3 = new THREE.Group(),
+	startGroup = new THREE.Group(),
+	continueGroup = new THREE.Group(),
 	textMesh1;
 
 var text = 'Welcome VR Game',
@@ -25,23 +28,26 @@ var text = 'Welcome VR Game',
 
 
 var start = function () {
+	loadFont();
+
 	group.position.set(0,-30,-90);
 	group.rotation.set(0.3,0,0);
 	group.scale.set(1.5,1.5,1.5);
 
-	group2.position.set(-20,-40,-90);
-	//group2.rotation.set(0.3,0,0);
-	//group2.scale.set(0.5,0.5,0.5);
+	startGroup.position.set(-20,-40,-90);
+	//startGroup.rotation.set(0.3,0,0);
+	//startGroup.scale.set(0.5,0.5,0.5);
 
-	group3.position.set(20,-40,-90);
-	//group3.rotation.set(0.3,0,0);
-	//group3.scale.set(0.5,0.5,0.5);
+	continueGroup.position.set(20,-40,-90);
+	//continueGroup.children[0].name = 'continueBtn';
+	//continueGroup.rotation.set(0.3,0,0);
+	//continueGroup.scale.set(0.5,0.5,0.5);
 
 
 	banana.canvas.scene.add(group);
-	banana.canvas.scene.add(group2);
-	banana.canvas.scene.add(group3);
-	loadFont();
+	banana.canvas.scene.add(startGroup);
+	banana.canvas.scene.add(continueGroup);
+
 
 };
 
@@ -121,7 +127,9 @@ function createText(text, group, color1, color2) {
 	textMesh1.rotation.x = 0;
 	textMesh1.rotation.y = Math.PI * 2;
 
+	banana.canBeChoseObjs.push(textMesh1);
 	group.add( textMesh1 );
+	return textMesh1;
 }
 function loadFont() {
 
@@ -129,12 +137,49 @@ function loadFont() {
 	loader.load( 'src/script/font/' + fontName + '_' + fontWeight + '.typeface.js', function ( response ) {
 
 		font = response;
-		createText('Welcome VR Game', group, 0xFF9800, 0xC41212);
-		createText('Start Game', group2, 0xFF9800, 0xC41212);
-		createText('Continue ', group3, 0xFF9800, 0xC41212);
-
+		var welcome = createText('Welcome VR Game', group, 0xFF9800, 0xC41212);
+		var startBtn = createText('Start Game', startGroup, 0xFF9800, 0xC41212);
+		var continueBtn = createText('Continue ', continueGroup, 0xFF9800, 0xC41212);
+		startBtn.name = "startBtn";
+		const hoverAction = ele => {
+			banana.makeAnimate({
+				from:{x:1},
+				to:{x:1.4},
+				duration:200
+			},function(){
+				ele.scale.set(this.x,this.x,this.x);
+			}).start();
+		};
+		const outAction = ele => {
+			banana.makeAnimate({
+				from:{x:1.4},
+				to:{x:1},
+				duration:200
+			}, function () {
+				ele.scale.set(this.x,this.x,this.x);
+			}).start();
+		};
+		startBtn.onhover = ()=>{
+			hoverAction(startBtn);
+		};
+		startBtn.onout = () => {
+			outAction(startBtn);
+		};
+		continueBtn.name = 'continueBtn';
+		continueBtn.onhover = ()=>{
+			hoverAction(continueBtn);
+		};
+		continueBtn.onout = () =>{
+			outAction(continueBtn);
+		};
+		continueBtn.onclick =() =>{
+			console.log('you click continue');
+		}
 	} );
 
 }
+
+
+
 
 export { start } ;

@@ -2,6 +2,8 @@ import { THREE } from 'three';
 import { banana } from './../banana';
 import '../../libs/StereoCamera'
 import '../../libs/DeviceOrientationControls'
+import cursorEvent from './cursorEvent'
+import TWEEN from '../../libs/Tween';
 
 banana.canvas = {};
 
@@ -19,7 +21,7 @@ class vrserver {
 		this.renderer = new THREE.WebGLRenderer();
 		this.output = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight );
 
-		this.vrEnable = false;
+		this.vrEnable = true;
 
 		this.renderer.setClearColor( 0x000000 );
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -45,6 +47,7 @@ class vrserver {
 		this.Orientation();
 		this.cursorGroup = this.cursor();
 		this.mouseMove();
+		this.cursorEvent();
 
 		document.querySelector( '#containe' ).appendChild( this.renderer.domElement );
 
@@ -62,7 +65,9 @@ class vrserver {
 	}
 
 	render() {
-//needsUpdate
+
+		TWEEN.update();
+
 		if (!this.vrEnable) {
 			this.renderer.render( this.scene, this.camera, this.output );
 			this.renderer.render( this.sceneOrtho, this.cameraOrtho );
@@ -140,6 +145,7 @@ class vrserver {
 		let ring = new THREE.Mesh( new THREE.RingGeometry( 10, 20, 20, 20, 0, 6.3 ), new THREE.MeshBasicMaterial( {color: 0xff0000} ) );
 		let point = new THREE.Mesh( new THREE.CircleGeometry( 6, 20, 0, 6.3 ), new THREE.MeshBasicMaterial( {color: 0xff0000} ) );
 
+		ring.name = 'cursorRing';
 		let texture = this.output.texture;
 		var plane = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), new THREE.MeshBasicMaterial( {
 			map: texture
@@ -186,6 +192,10 @@ class vrserver {
 
 	};
 
+	cursorEvent(){
+
+		cursorEvent(this);
+	}
 	init() {
 
 	}
