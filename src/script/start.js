@@ -1,13 +1,16 @@
 import {THREE} from 'three';
 import {banana} from './banana';
 import '../libs/GeometryUtils'
+import { Sprite } from './wiget/Sprite';
+import TWEEN from '../libs/Tween';
+import {chapter1} from './chapter1'
 
 window.THREE = THREE;
 
 var group = new THREE.Group(),
 	startGroup = new THREE.Group(),
 	continueGroup = new THREE.Group(),
-	textMesh1;
+	firstSprite;
 
 var text = 'Welcome VR Game',
 	height = 2,
@@ -35,21 +38,18 @@ var start = function () {
 	group.scale.set(1.5,1.5,1.5);
 
 	startGroup.position.set(-20,-40,-90);
-	//startGroup.rotation.set(0.3,0,0);
-	//startGroup.scale.set(0.5,0.5,0.5);
-
 	continueGroup.position.set(20,-40,-90);
-	//continueGroup.children[0].name = 'continueBtn';
-	//continueGroup.rotation.set(0.3,0,0);
-	//continueGroup.scale.set(0.5,0.5,0.5);
-
 
 	banana.canvas.scene.add(group);
 	banana.canvas.scene.add(startGroup);
 	banana.canvas.scene.add(continueGroup);
 
+	var sprite = new Sprite();
+	firstSprite = sprite.createSprite(5,true,1,0xffffff,0,0,0,-60);
+
 
 };
+
 
 
 function createText(text, group, color1, color2) {
@@ -165,6 +165,9 @@ function loadFont() {
 		startBtn.onout = () => {
 			outAction(startBtn);
 		};
+		startBtn.onclick = () =>{
+			start.prototype.leave();
+		};
 		continueBtn.name = 'continueBtn';
 		continueBtn.onhover = ()=>{
 			hoverAction(continueBtn);
@@ -180,6 +183,38 @@ function loadFont() {
 }
 
 
+start.prototype.leave = ()=>{
 
+	banana.makeAnimate({
+		from:{x:-90},
+		to:{x:-900},
+		duration:500,
+		complete:()=>{
+			banana.canvas.scene.remove(group);
+			banana.canvas.scene.remove(startGroup);
+			banana.canvas.scene.remove(continueGroup);
+
+			var a = banana.makeAnimate({
+				from:{x:1},to:{x:0},duration:2000
+				,complete:()=>{
+					chapter1.enter();
+				}
+			}, function () {
+				firstSprite.material.opacity = this.x
+			});
+			a.easing(TWEEN.Easing.Bounce.InOut);
+			a.start();
+		}
+	}, function () {
+
+		group.position.z = this.x;
+		startGroup.position.z = this.x;
+		continueGroup.position.z = this.x;
+
+
+	}).start();
+
+
+};
 
 export { start } ;

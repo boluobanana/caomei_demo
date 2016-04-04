@@ -3,6 +3,7 @@ import {banana} from "./banana";
 import { vrserver } from "./wiget/vrserver"
 import { start } from  "./start";
 import { LittleSprite } from './wiget/LittleSprite'
+import { Sprite } from './wiget/Sprite';
 
 var canvas = new vrserver();
 banana.canvas = canvas;
@@ -16,10 +17,6 @@ function init() {
 
 
 function widgetInit() {
-
-	var sprite = new LittleSprite( canvas );
-	sprite.createLittleSprite(0,0,-100);
-
 	//for (var x = -5; x < 5; x++) {
 	//	for (var y = -5; y < 5; y++) {
 	//		sprite.createLittleSprite( x * 10, y * 10, -100 );

@@ -51,16 +51,20 @@ var cursorEvent = (scope)=>{
 
 			if ( INTERSECTED != intersects[ 0 ].object ) {
 
+				//选中前上一个对象的out操作
 				INTERSECTED.onout && INTERSECTED.onout();
+
+
+				//新对象的hover操作已经click动画与操作
 				INTERSECTED = intersects[ 0 ].object;
 				INTERSECTED.onhover && INTERSECTED.onhover();
-
 				ringAnimate.onComplete(INTERSECTED.onclick||null);
 				ringAnimate.start();
 			}
 		}else{
-			ringAnimate.stop();
+			//移出对象时out操作和动画停止
 			INTERSECTED.onout && INTERSECTED.onout();
+			ringAnimate.stop();
 			INTERSECTED = {};
 		}
 	})

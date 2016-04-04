@@ -15,7 +15,7 @@ class Sprite{
 		var spriteMaterial = new THREE.SpriteMaterial({
 				opacity: opacity,
 				color: color,
-				transparent: transparent,
+				//transparent: transparent,
 				map: scope.getTexture()
 			}
 		);
