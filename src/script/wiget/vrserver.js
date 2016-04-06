@@ -21,7 +21,7 @@ class vrserver {
 		this.renderer = new THREE.WebGLRenderer();
 		this.output = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight );
 
-		this.vrEnable = false;
+		this.vrEnable = true;
 
 		this.renderer.setClearColor( 0x000000 );
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
