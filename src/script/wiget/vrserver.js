@@ -4,6 +4,7 @@ import '../../libs/StereoCamera'
 import '../../libs/DeviceOrientationControls'
 import cursorEvent from './cursorEvent'
 import TWEEN from '../../libs/Tween';
+import { BgController } from './BgController'
 
 banana.canvas = {};
 
@@ -21,14 +22,14 @@ class vrserver {
 		this.renderer = new THREE.WebGLRenderer();
 		this.output = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight );
 
-		this.vrEnable = true;
+		this.vrEnable = false;
 
 		this.renderer.setClearColor( 0x000000 );
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 
 
-		var light = new THREE.AmbientLight( 0xcccccc );
+		var light = new THREE.AmbientLight( 0xffffff );
 		var axes = new THREE.AxisHelper( 20 );
 		this.scene.add( light );
 		this.scene.add( axes );
@@ -48,6 +49,9 @@ class vrserver {
 		this.cursorGroup = this.cursor();
 		this.mouseMove();
 		this.cursorEvent();
+		this.bgController();
+		this.map();
+
 
 		document.querySelector( '#containe' ).appendChild( this.renderer.domElement );
 
@@ -150,7 +154,7 @@ class vrserver {
 		var plane = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), new THREE.MeshBasicMaterial( {
 			map: texture
 		} ) );
-		plane.position.set( window.innerWidth / 2, window.innerHeight / 2, -2 );
+		plane.position.set( window.innerWidth / 2, window.innerHeight / 2, -100 );
 
 
 		let cursorGroup = new THREE.Group();
@@ -247,8 +251,49 @@ class vrserver {
 		}
 
 	}
+	bgController() {
+		BgController(this.scene);
+	}
 
+	map(){
 
+		var mapGeo = new THREE.PlaneGeometry(200,200);
+		var mapMat = new THREE.MeshBasicMaterial({
+			color:0x000000,
+			transparent:true,
+			opacity:0.3
+		});
+		var mapMesh = new THREE.Mesh(mapGeo,mapMat);
+
+		var geometry = new THREE.Geometry();
+		var v1 = new THREE.Vector3(-50,0,0);   // Vector3 used to specify position
+		var v2 = new THREE.Vector3(50,0,0);
+		var v3 = new THREE.Vector3(0,50,0);   // 2d = all vertices in the same plane.. z = 0
+
+// 把三个点加到 Geometry 里
+		geometry.vertices.push(v1);
+		geometry.vertices.push(v2);
+		geometry.vertices.push(v3);
+		geometry.faces.push(new THREE.Face3(0, 1, 2));
+		geometry.computeBoundingSphere();
+
+		var redMat = new THREE.MeshBasicMaterial({color: 0xffffff});
+		var triangle = new THREE.Mesh(geometry, redMat);
+
+		triangle.position.set(100,100,-1);
+
+		this.sceneOrtho.add(triangle);
+		this.sceneOrtho.add(mapMesh);
+
+		banana.subscribe('animate',() => {
+			//console.log(this.camera.rotation);
+		});
+
+		banana.subscribe('resize', function () {
+			mapMesh.position.set( 100, 100, -1 );
+		})
+
+	}
 
 }
 

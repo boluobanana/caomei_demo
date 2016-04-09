@@ -3,7 +3,8 @@ import {banana} from './banana';
 import '../libs/GeometryUtils'
 import { Sprite } from './wiget/Sprite';
 import TWEEN from '../libs/Tween';
-import {chapter1} from './chapter1'
+import {chapter1} from './chapter1';
+
 
 window.THREE = THREE;
 
