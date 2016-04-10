@@ -207,7 +207,9 @@ class vrserver {
 	mouseMove(){
 
 		var lon = 270,lat = 0;
-		var phi = 0,theta = 0,target = new THREE.Vector3();
+		var phi = 0,theta = 0;
+		var target = new THREE.Vector3();
+
 		document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
 		banana.subscribe('animate',  ()=> {
@@ -266,20 +268,19 @@ class vrserver {
 		var mapMesh = new THREE.Mesh(mapGeo,mapMat);
 
 		var geometry = new THREE.Geometry();
-		var v1 = new THREE.Vector3(-50,0,0);   // Vector3 used to specify position
-		var v2 = new THREE.Vector3(50,0,0);
-		var v3 = new THREE.Vector3(0,50,0);   // 2d = all vertices in the same plane.. z = 0
+		var v1 = new THREE.Vector3(-50,50,0);   // Vector3 used to specify position
+		var v2 = new THREE.Vector3(50,50,0);
+		var v3 = new THREE.Vector3(0,0,0);   // 2d = all vertices in the same plane.. z = 0
 
 // 把三个点加到 Geometry 里
 		geometry.vertices.push(v1);
 		geometry.vertices.push(v2);
 		geometry.vertices.push(v3);
-		geometry.faces.push(new THREE.Face3(0, 1, 2));
+		geometry.faces.push(new THREE.Face3(0, 2, 1));
 		geometry.computeBoundingSphere();
 
 		var redMat = new THREE.MeshBasicMaterial({color: 0xffffff});
 		var triangle = new THREE.Mesh(geometry, redMat);
-
 		triangle.position.set(100,100,-1);
 
 		this.sceneOrtho.add(triangle);
@@ -287,11 +288,14 @@ class vrserver {
 
 		banana.subscribe('animate',() => {
 			//console.log(this.camera.rotation);
+			triangle.rotation.z = this.camera.rotation.y;
+
 		});
 
 		banana.subscribe('resize', function () {
 			mapMesh.position.set( 100, 100, -1 );
 		})
+
 
 	}
 
