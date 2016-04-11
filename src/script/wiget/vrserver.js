@@ -50,7 +50,7 @@ class vrserver {
 		this.mouseMove();
 		this.cursorEvent();
 		this.bgController();
-		this.map();
+		this.initMap();
 
 
 		document.querySelector( '#containe' ).appendChild( this.renderer.domElement );
@@ -225,8 +225,6 @@ class vrserver {
 
 				this.camera.lookAt( target );
 			}
-
-
 		});
 
 		function onDocumentMouseDown( event ) {
@@ -257,8 +255,8 @@ class vrserver {
 		BgController(this.scene);
 	}
 
-	map(){
-
+	initMap(){
+		this.map = new THREE.Group();
 		var mapGeo = new THREE.PlaneGeometry(200,200);
 		var mapMat = new THREE.MeshBasicMaterial({
 			color:0x000000,
@@ -281,10 +279,11 @@ class vrserver {
 
 		var redMat = new THREE.MeshBasicMaterial({color: 0xffffff});
 		var triangle = new THREE.Mesh(geometry, redMat);
-		triangle.position.set(100,100,-1);
+		this.map.position.set(100,100,-1);
 
-		this.sceneOrtho.add(triangle);
-		this.sceneOrtho.add(mapMesh);
+		this.map.add(triangle);
+		this.map.add(mapMesh);
+		this.sceneOrtho.add(this.map);
 
 		banana.subscribe('animate',() => {
 			//console.log(this.camera.rotation);
@@ -293,7 +292,7 @@ class vrserver {
 		});
 
 		banana.subscribe('resize', function () {
-			mapMesh.position.set( 100, 100, -1 );
+			//mapMesh.position.set( 100, 100, -1 );
 		})
 
 

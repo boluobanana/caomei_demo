@@ -32,8 +32,8 @@ class LittleSprite extends Sprite{
 				t.material.opacity = this.x;
 
 			}).start();
-		}
-
+		};
+		return t;
 	}
 }
 export { LittleSprite };
